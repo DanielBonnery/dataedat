@@ -4,16 +4,6 @@ library(synthpop)
 library(R2jags)
 library(SweaveLst)
 
-tab<-els_02_12_byf3pststu_v1_0[,c("STU_ID","SCH_ID","BYSEX","BYG10EP","BYTXMIRR")][els_02_12_byf3pststu_v1_0$BYSEX>0,]
-tab$BYSEX<-as.factor(tab$BYSEX)
-
-#tab$BYG10EP<-factor(tab$BYG10EP,ordered=TRUE)
-tab$SCH_ID<-as.factor(substr(tab$STU_ID,1,4))
-tab<-tab[,c("SCH_ID","BYSEX","BYG10EP","BYTXMIRR")]
-nrow(tab)
-set.seed(2)
-tab<-tab[is.element(tab$SCH_ID,sample(levels(tab$SCH_ID),50)),]
-tab$SCH_ID<-factor(tab$SCH_ID)
 
 predictor.matrix1=matrix(c(1,0,1,1,0,1,1,1,0,0,0,1,0,0,0,0),4,4)
 predictor.matrix2=matrix(c(1,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0),4,4)
@@ -23,7 +13,6 @@ tabs<-lapply(list(predictor.matrix1,predictor.matrix2,predictor.matrix3),functio
   syn(tab,predictor.matrix=pred,method=c("","","parametric","parametric"),drop.pred.only=FALSE,
           maxfaclevels=nlevels(tab$SCH_ID))$syn})
 
-save(tab1,tab2,tab3,file="tabs.rda")
 
 model=as.formula("BYTXMIRR~BYSEX+BYG10EP+(BYG10EP|SCH_ID)")
 
